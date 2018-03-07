@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<?var url = getScriptUrl();?>
+<html>
+  <head>
+    <base target="_top">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/foundation/6.4.3/css/foundation.min.css">
+  </head>
+  <body>
+    <div class="grid-container" id="app">
+      <h3 class="text-center">Booming Mind Classes</h3> 
+      <div class="grid-x" v-for="course in courses">
+        <div class="card">
+          <div class="card-divider">
+            <h3>{{ course.CourseCode }} - {{course.CourseName}}</h3>
+          </div>
+          <div class="card-section">
+            <table>
+              <tr><th>Date</th><th>Time</th><th>Location</th><th># of students signed up</th><th></th></tr>
+              <tr v-for="cls in classes" v-if="cls.CourseCode===course.CourseCode">
+                <td align='center'>{{cls.Date}}</td>
+                <td align='center'>{{cls.TimeBegin}} - {{cls.TimeEnd}}</td>
+                <td align='center'>{{cls.Location}}</td>
+                <td align='center'>{{cls.NumEnrolled}}</td>
+                <td><input type='button' class='button' style='margin:0;' value='Sign Up' v-on:click="signup('<?=url?>', cls.CourseCode, cls.ClassID);"></td>
+              </tr>
+            </table>
+          </div>
+        </div>
+      </div>            
+    </div>  
+  </body>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script src="https://unpkg.com/vue"></script>    
+  <script>
+     var vm = new Vue({
+        el: '#app',
+        data: {
+          courses: [],
+          classes: []
+        },
+        methods: {
+          signup: function (url, courseCode, classID) {
+            window.open(url+"?what=signup&CourseCode=" + courseCode + "&ClassID=" + classID, "_blank");
+          }
+        }
+      });
+    
+    function onGetCourses(e)
+    {
+      vm.courses = e;
+    }
+    
+    function getCourses() 
+    {
+      google.script.run.withSuccessHandler(onGetCourses).getCourses();
+    }
+    
+    function onGetAllClasses(e)
+    {
+      vm.classes = e;
+    }
+    
+    function getAllClasses()
+    {
+      google.script.run.withSuccessHandler(onGetAllClasses).getAllClasses();
+    }
+    
+    getCourses();
+    getAllClasses();
+  </script>
+</html>
+
+
+
